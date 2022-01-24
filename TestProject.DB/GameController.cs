@@ -11,9 +11,9 @@ namespace TestProject.DB
 {
 	public class GameController
 	{
-		private static GameDbController Games { get; } = new();
-		private static DeveloperDbController Developers { get; } = new();
-		private static GenreDbController Genres { get; } = new();
+		public static GameDbController Games { get; } = new();
+		public static DeveloperDbController Developers { get; } = new();
+		public static GenreDbController Genres { get; } = new();
 
 		public async Task<IEnumerable<Game>> GetAll()
 		{

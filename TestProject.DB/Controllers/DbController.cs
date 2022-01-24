@@ -10,7 +10,7 @@ using TestProject.View.Models;
 
 namespace TestProject.DB.Controllers
 {
-	abstract class DbController<T> : IDbController<T> where T : BaseEntity
+	public abstract class DbController<T> : IDbController<T> where T : BaseEntity
 	{
 		protected abstract DbSet<T> Entities { get; }
 

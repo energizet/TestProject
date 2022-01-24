@@ -8,7 +8,7 @@ using TestProject.View.Models;
 
 namespace TestProject.DB.Controllers
 {
-	class DeveloperDbController : DbController<Developer>
+	public class DeveloperDbController : DbController<Developer>
 	{
 		protected override DbSet<Developer> Entities => Db.Entities.Developers;
 	}

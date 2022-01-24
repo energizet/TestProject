@@ -8,7 +8,7 @@ using TestProject.View.Models;
 
 namespace TestProject.DB.Controllers
 {
-	class GameDbController : DbController<Game>
+	public class GameDbController : DbController<Game>
 	{
 		protected override DbSet<Game> Entities => Db.Entities.Games;
 	}

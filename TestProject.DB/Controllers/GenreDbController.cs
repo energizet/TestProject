@@ -8,7 +8,7 @@ using TestProject.View.Models;
 
 namespace TestProject.DB.Controllers
 {
-	class GenreDbController : DbController<Genre>
+	public class GenreDbController : DbController<Genre>
 	{
 		protected override DbSet<Genre> Entities => Db.Entities.Genres;
 	}
