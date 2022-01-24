@@ -2,7 +2,7 @@
 
 namespace TestProject.View.Models
 {
-	public partial class Genre : IEntity
+	public partial class Genre : BaseEntity
 	{
 	}
 }

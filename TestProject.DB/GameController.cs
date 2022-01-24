@@ -9,7 +9,7 @@ using TestProject.View.Models;
 
 namespace TestProject.DB
 {
-	class GameController
+	public class GameController
 	{
 		private static GameDbController Games { get; } = new();
 		private static DeveloperDbController Developers { get; } = new();
@@ -40,7 +40,7 @@ namespace TestProject.DB
 
 		public async Task<Game> Insert(Game item)
 		{
-			var game = new Game
+			var game1 = new Game
 			{
 				Name = "Game",
 				Developer = new Developer
@@ -54,24 +54,106 @@ namespace TestProject.DB
 				}
 			};
 
+			if (item.Id != Guid.Empty)
+			{
+				throw new ArgumentException("Game cannot contain Id when inserting.");
+			}
 
+			if (item.Developer == null || string.IsNullOrWhiteSpace(item.Developer.Name))
+			{
+				throw new ArgumentException("Game must contain Developer.");
+			}
 
-			await Db.Entities.Games.AddAsync(item);
+			if (item.GameGenreLinks == null)
+			{
+				throw new ArgumentException("Genres cannot be null.");
+			}
+
+			item.GameGenreLinks = item.GameGenreLinks.Where(link => link.Genre != null && string.IsNullOrWhiteSpace(link.Genre.Name)).ToList();
+
+			if (item.GameGenreLinks.Count <= 0)
+			{
+				throw new ArgumentException("Game must contain Genres.");
+			}
+
+			var developer = await Developers.Get(item.Developer.Name) ?? await Developers.Insert(item.Developer);
+			var game = await Games.Insert(new Game
+			{
+				Name = item.Name,
+				DeveloperId = developer.Id,
+			});
+
+			var genres = item.GameGenreLinks
+				.Select(link => link.Genre)
+				.Select(async genre => await Genres.Get(genre.Name) ?? await Genres.Insert(genre));
+
+			foreach (var genre in genres)
+			{
+				await Db.Entities.GameGenreLinks.AddAsync(new GameGenreLink
+				{
+					Id = Guid.NewGuid(),
+					GameId = game.Id,
+					GenreId = (await genre).Id,
+				});
+			}
+
 			await Db.Entities.SaveChangesAsync();
-			return item;
+			return game;
 		}
 
 		public async Task<Game> Update(Game item)
 		{
-			Db.Entities.Games.Update(item);
-			await Db.Entities.SaveChangesAsync();
-			return item;
+			if (item.Id == Guid.Empty)
+			{
+				throw new ArgumentException("Game must contain Id when updating.");
+			}
+
+			if (item.Developer == null || string.IsNullOrWhiteSpace(item.Developer.Name))
+			{
+				throw new ArgumentException("Game must contain Developer.");
+			}
+
+			if (item.GameGenreLinks == null)
+			{
+				throw new ArgumentException("Genres cannot be null.");
+			}
+
+			item.GameGenreLinks = item.GameGenreLinks.Where(link => link.Genre != null && string.IsNullOrWhiteSpace(link.Genre.Name)).ToList();
+
+			if (item.GameGenreLinks.Count <= 0)
+			{
+				throw new ArgumentException("Game must contain Genres.");
+			}
+
+			var game = await Games.Get(item.Id);
+			if (game == null)
+			{
+				throw new ArgumentException("Game must contain correct Id when updating.");
+			}
+
+			var developer = await Developers.Get(item.Developer.Name) ?? await Developers.Insert(item.Developer);
+			game.DeveloperId = developer.Id;
+
+			var genres = item.GameGenreLinks
+				.Select(link => link.Genre)
+				.Select(async genre => await Genres.Get(genre.Name) ?? await Genres.Insert(genre));
+
+			foreach (var genre in genres)
+			{
+				await Db.Entities.GameGenreLinks.AddAsync(new GameGenreLink
+				{
+					Id = Guid.NewGuid(),
+					GameId = game.Id,
+					GenreId = (await genre).Id,
+				});
+			}
+
+			return await Games.Update(item);
 		}
 
-		public async Task<bool> Delete(Game item)
+		public async Task<bool> Delete(Guid id)
 		{
-			Db.Entities.Games.Remove(item);
-			return await Db.Entities.SaveChangesAsync() > 0;
+			return await Games.Delete(id);
 		}
 	}
 }

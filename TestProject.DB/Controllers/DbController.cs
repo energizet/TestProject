@@ -10,7 +10,7 @@ using TestProject.View.Models;
 
 namespace TestProject.DB.Controllers
 {
-	abstract class DbController<T> : IDbController<T> where T : IEntity
+	abstract class DbController<T> : IDbController<T> where T : BaseEntity
 	{
 		protected abstract DbSet<T> Entities { get; }
 
@@ -22,6 +22,11 @@ namespace TestProject.DB.Controllers
 		public virtual async Task<T> Get(Guid id)
 		{
 			return await Entities.Where(item => item.Id == id).SingleOrDefaultAsync();
+		}
+
+		public virtual async Task<T> Get(string name)
+		{
+			return await Entities.Where(item => item.Name == name).SingleOrDefaultAsync();
 		}
 
 		public virtual async Task<T> Insert(T item)
@@ -45,6 +50,5 @@ namespace TestProject.DB.Controllers
 			Entities.Remove(item);
 			return await Db.Entities.SaveChangesAsync() > 0;
 		}
-
 	}
 }

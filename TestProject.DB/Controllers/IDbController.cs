@@ -10,6 +10,8 @@ namespace TestProject.DB.Controllers
 
 		public Task<T> Get(Guid id);
 
+		public Task<T> Get(string name);
+
 		public Task<T> Insert(T item);
 
 		public Task<T> Update(T item);

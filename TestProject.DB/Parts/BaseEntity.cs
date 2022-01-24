@@ -2,8 +2,9 @@
 
 namespace TestProject.DB.Parts
 {
-	public abstract class IEntity
+	public abstract class BaseEntity
 	{
 		public Guid Id { get; set; }
+		public string Name { get; set; }
 	}
 }

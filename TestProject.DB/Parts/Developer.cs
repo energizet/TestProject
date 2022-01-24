@@ -2,7 +2,7 @@
 
 namespace TestProject.View.Models
 {
-	public partial class Developer : IEntity
+	public partial class Developer : BaseEntity
 	{
 	}
 }

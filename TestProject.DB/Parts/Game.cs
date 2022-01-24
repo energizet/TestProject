@@ -2,7 +2,7 @@
 
 namespace TestProject.View.Models
 {
-	public partial class Game : IEntity
+	public partial class Game : BaseEntity
 	{
 	}
 }
